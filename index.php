@@ -175,8 +175,10 @@ require("functions.php");
                       special_var_dump($final_book);
                       $_SESSION['english']['word']=$check_books;
                   }
-              }
+                }
 
+                header('Location:check.php');
+                exit();
 }
 
   //セッションに処理後の配列を挿入する
@@ -185,4 +187,3 @@ require("functions.php");
  	<textarea name="text"></textarea><br>
  	<input type="submit" value="登録される">
  </form>
- <a href="check.php">編集</a>
