@@ -1,6 +1,6 @@
 <?php 
  //$debug=true;
-define('DEBUG', true);
+define('DEBUG', false);
 
 	//echoの独自関数化
 	//1:UIに必要な表示をするため

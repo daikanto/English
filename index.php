@@ -110,6 +110,9 @@ require("functions.php");
         $overlaps=array();
         $check_book=array();
         $final_book=array();
+        $_SESSION['english_word']=array();
+        $test=array();
+
 
 
         foreach($english['book'] as $check_words){
@@ -159,6 +162,7 @@ require("functions.php");
                   }
 
         }
+                  special_echo('重複していない');
               foreach ($english['book'] as $check_books) {
                           $count=0;
                  //重複する文字を入力した文字配列
@@ -170,13 +174,28 @@ require("functions.php");
                   }
 
                   if ($count==0) {
-                      special_echo('重複していない');
                       $final_book=$check_books;
                       special_var_dump($final_book);
-                      $_SESSION['english']['word']=$check_books;
-                  }
+                      //$_SESSION['english_word']=$final_book;
+                      array_push($_SESSION['english_word'], $check_books);
+                      $test=$check_books;
+
+                      foreach(array($_SESSION['english_word']) as $w){
+                  special_var_dump($w);
                 }
 
+                  }
+                  //special_echo('$_SESSION[english_word]');
+                  //special_var_dump($_SESSION['english_word']);
+                //  if (empty($_SESSION['englsih'])) {
+                //header('Location:index.php');
+                //exit();
+                    
+                  //}
+
+                }
+
+                
                 header('Location:check.php');
                 exit();
 }
