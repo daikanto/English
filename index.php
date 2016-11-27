@@ -6,32 +6,48 @@ require("functions.php");
   session_start();
   require('dbconnect.php');
 
+  //ログイン状態か判定条件
+  //session has id
+  // the last actibait is within 1 hour.
+  if (isset($_SESSION['id'])&&$_SESSION['time']+3600>time()) {
+      $_SESSION['time']=time();
+  //while login get longin user information by using id
+      $sql=sprintf('SELECT * FROM `member` WHERE `member_id`=%d', mysqli_real_escape_string($db,$_SESSION['id']));
+      $record=mysqli_query($db,$sql) or die(mysqli_error($db));
+      $member=mysqli_fetch_assoc($record);      
+  }
+  //else: we judge on logout, move index.php
+  else{
+    header('Location:login.php');
+  }
+
   //DB_text tableに入力したテキストがDBにtext,date,登録される
   //ボタンを押されたか判断
-  if (!empty($_POST)) {
-  //エラーがblank判定
-  	 if ($_POST['text']==' ') {
-  	 		$error['text']='blank';
-  	 		echo "空欄でーす";
-  	 }	
+  if (!empty($_POST)){
+      //エラーがblank判定
+     if ($_POST['text']==' ') {
+        $error['text']='blank';
+        echo "空欄でーす";
+     }  
   //エラー:英語じゃない文字が入力される 問題点'.'判別されてしまう。s
-  	 if ((ctype_alnum($_POST['text']))==true) {//FALSE
-   	 		$error['text']='not_english';
-  	 		echo "英語じゃない文字が入力されている";
-  	 }
+     if ((ctype_alnum($_POST['text']))==true) {//FALSE
+        $error['text']='not_english';
+        echo "英語じゃない文字が入力されている";
+     }
   //エラー：テキストが.で終わっていない かつ　テキストの最後の'.'の後にスペースが入る場合(未実装)//&& (substr($_POST['text'],-1)!==' ')
-  	 if ((substr($_POST['text'],-1)!=='.')){
-  	 		$error['text']='not_dot';
-  	 		echo "'.'で終わっていないテキストです";
-  	 }
-  	 if (empty($error['text'])){
+     if ((substr($_POST['text'],-1)!=='.')){
+        $error['text']='not_dot';
+        echo "'.'で終わっていないテキストです";
+     }
+     if (empty($error['text'])){
+      //$_sesstion[]でテキストの値を保存する
+      //保存はcheck.phpで行う
+      $_SESSION['text']=$_POST['text'];
 
-  	 		//$sql = sprintf('INSERT INTO `text` SET `text`="%s",`number_vocabulary`=0,`date`=NOW()',mysqli_real_escape_array($db,$_POST['text']));
-  	 	  //mysqli_query($db,$sql) or die(mysqli_error($db));
-  	 	    echo "DBにテキスト登録成功";
+          echo "DBにテキスト登録成功";
           echo '<br>';
 
-  	
+    
 //テキストから一文の選択
       $number_sentence=array();
 //テキストをすべて小文字に変換
@@ -48,60 +64,64 @@ require("functions.php");
       $number_words=array();
       $english['book']=array();
       foreach ($english['text'] as $english['sentence'] ) {
-//文章から単語を取り出す
-      $english['word']=explode(' ',$english['sentence']);
-		  $count_words=count($english['word']);
-//""を取り除く
-      $english['word']=str_replace('"', '', $english['word']);
-//,を取り除く
-      $english['word']=str_replace(',','', $english['word']);
-//()を取り除く
-      $english['word']=str_replace('(','', $english['word']);
-      $english['word']=str_replace(')','', $english['word']);
-//-を取り除く
-      $english['word']=str_replace('-','', $english['word']);
-//冠詞をのぞくを取り除く the a an 
-//前置詞の削除 in out by for on at with to exc
-//be動詞の削除 be
-//助動詞の削除 can may would will could might must should  
-//代名詞の削除
+          //文章から単語を取り出す
+                $english['word']=explode(' ',$english['sentence']);
+                $count_words=count($english['word']);
+          //""を取り除く
+                $english['word']=str_replace('"', '', $english['word']);
+          //,を取り除く
+                $english['word']=str_replace(',','', $english['word']);
+          //()を取り除く
+                $english['word']=str_replace('(','', $english['word']);
+                $english['word']=str_replace(')','', $english['word']);
+          //-を取り除く
+                $english['word']=str_replace('-','', $english['word']);
+          //冠詞をのぞくを取り除く the a an 
+          //前置詞の削除 in out by for on at with to exc
+          //be動詞の削除 be
+          //助動詞の削除 can may would will could might must should  
+          //代名詞の削除
 
 
-//○○'sの's削除　
-//数字の削除
-      $english['word']=preg_replace('/[0-9]/','',$english['word']);
-//文字列が入ってんいない配列の削除
-      $english['word']=array_filter($english['word']);
-//配列内で重複している文字列をs駆除
-      $english['word']=array_unique($english['word']);
-//配列のkey要素をリセットし、再カウント
-      $english['book']=array_merge($english['word'],$english['book']);
+          //○○'sの's削除　
+          //数字の削除
+                $english['word']=preg_replace('/[0-9]/','',$english['word']);
+          //文字列が入ってんいない配列の削除
+                $english['word']=array_filter($english['word']);
+          //配列内で重複している文字列をs駆除
+                $english['word']=array_unique($english['word']);
+          //配列のkey要素をリセットし、再カウント
+                $english['book']=array_merge($english['word'],$english['book']);
 
-
-//
-//連想配列を連結させる
-
-//配列内での重複したものを検証
-//英単語だけの配列完成
-
-//単語の保存 
-//重複した単語は保存しない　DB登録OK
-  //DBの接続をなるべく減らす
-  //重複した単語がある場合//DBでの単語の重複検索を行うのがいいのか、テキストである程度重複を減らしたほうがいいのか→極力DBの接続の回数は減らす
-    //DBの登録はしない
-
-  //重複しない場合
-    //DBの登録を行う
-      //$sql = sprintf('INSERT INTO `word` SET `word`="%s",`status`=0,`date`=NOW()',mysqli_real_escape_string($db,$words));
-      //mysqli_query($db,$sql) or die (mysqli_error($db));
-//重複した単語はDBに登録しない
-       //配列内で重複したものを削除
-       //DBから取り出す
-       //DBから取り出した英単語とphp上の配列で重複チェック
-    //}
-   }
+             }
   }
-         //DBから英単語を取り出す
+
+
+          $sql=sprintf('SELECT * FROM `WID_TID` WHERE `m_id`=%d', mysqli_real_escape_string($db,$_SESSION['id']));
+          $tw_id=mysqli_query($db, $sql) or die(mysqli_error($db));
+          $words=array();
+          while ($id=mysqli_fetch_assoc($tw_id)){
+              special_var_dump($id);
+          //ヒットした英単語とテキストのIDを使ってwordからテキストと英単語を取り出す
+          //英単語
+              $sql=sprintf('SELECT `word` FROM `word` WHERE `word_id`=%d', mysqli_real_escape_string($db,$id['w_id']));
+              $record=mysqli_query($db, $sql) or die(mysqli_error($db));
+
+              $word=mysqli_fetch_assoc($record);
+                array_push($words, $word['word']);
+                  if ($word=='') {
+                 special_echo('該当する英単語がありません');
+                }
+                else{
+
+              special_var_dump($word);        
+                }
+          }
+
+
+
+
+         //DBから英単語を取り出す→→→m_idに紐づいた単語を取り出す。
         $sql='SELECT `word_id`,`word` FROM `word` WHERE 1';
         $record=mysqli_query($db,$sql) or die(mysqli_error($db));
         $check=array();
@@ -111,11 +131,7 @@ require("functions.php");
         $check_book=array();
         $final_book=array();
         $_SESSION['english_word']=array();
-        $test=array();
-
-
-
-        foreach($english['book'] as $check_words){
+       foreach($english['book'] as $check_words){
                 special_echo('入力した文字列');
                 special_var_dump($check_words);
                 special_echo('DBにある単語');
@@ -123,30 +139,17 @@ require("functions.php");
                //fetchしてarray型に変換する
                while ($check['db_english']=mysqli_fetch_assoc($record)) {
 
-                  if($check['db_english']['word']==$check_words){
-                    echo '同じやつ';
-                    echo '<br>';
-                    //同じやつだった場合の処理
-                    //$check_words=' ';
-                     $result[]=$check_words;
-
-                    //$english['book']=str_replace($check_words,'', $english['book']);
-                    //special_var_dump($english['book']);                
-                   }
-                  else{
-                  }
-              
+                      if($check['db_english']['word']==$check_words){
+                        echo '同じやつ';
+                        echo '<br>';
+                        //同じやつだった場合の処理
+                         $result[]=$check_words;
+                       }           
                 //special_var_dump($english['book']);
                 special_var_dump($check['db_english']['word']);               
               }
               //mysqlのカウントをリセット
                 mysqli_data_seek($record,0);
-              //配列に結果を入力
-
-                //$check_words=array_filter($check_words);
-                //special_var_dump($check_words);
-        
-
                   special_echo('重複文字');
                   foreach($result as $overlap){
                     //special_echo($overlap);
@@ -155,14 +158,10 @@ require("functions.php");
                   $overlaps=$overlap;
                   special_var_dump($overlaps);
                   special_echo('-----------------------------------------------------------------------');
-                  //各配列で該当する文字列を削除
-                 // $english['book']=trim($overlap, $english['book']);
-
-                  //special_var_dump($english['book']);
                   }
 
         }
-                  special_echo('重複していない');
+         special_echo('重複していない');
               foreach ($english['book'] as $check_books) {
                           $count=0;
                  //重複する文字を入力した文字配列
@@ -170,39 +169,35 @@ require("functions.php");
                           if ($check_books==$over) {
                                 $count++;                    
                             }
-           
                   }
 
-                  if ($count==0) {
+                if ($count==0) {
                       $final_book=$check_books;
                       special_var_dump($final_book);
-                      //$_SESSION['english_word']=$final_book;
                       array_push($_SESSION['english_word'], $check_books);
-                      $test=$check_books;
 
                       foreach(array($_SESSION['english_word']) as $w){
-                  special_var_dump($w);
-                }
-
+                      special_var_dump($w);
+                      }
                   }
                   //special_echo('$_SESSION[english_word]');
                   //special_var_dump($_SESSION['english_word']);
                 //  if (empty($_SESSION['englsih'])) {
                 //header('Location:index.php');
                 //exit();
-                    
                   //}
-
                 }
-
-                
                 header('Location:check.php');
                 exit();
 }
 
-  //セッションに処理後の配列を挿入する
+
+
+//セッションに処理後の配列を挿入する
  ?>
+ <p>user name:<?php echo $member['user_name']; ?></p>
  <form method="post">
- 	<textarea name="text"></textarea><br>
- 	<input type="submit" value="登録される">
+ 	<textarea name="text" style="font-size: 50px"></textarea><br>
+ 	<input type="submit" value="単語を検索">
  </form>
+ <a href="edit.php?m_id=<?php echo $_SESSION['id']; ?>">編集</a>|<a href="show.php">単語一覧へ</a>
