@@ -113,8 +113,7 @@ require("functions.php");
                  special_echo('該当する英単語がありません');
                 }
                 else{
-
-              special_var_dump($word);        
+                 special_var_dump($word);        
                 }
           }
 
@@ -122,8 +121,8 @@ require("functions.php");
 
 
          //DBから英単語を取り出す→→→m_idに紐づいた単語を取り出す。
-        $sql='SELECT `word_id`,`word` FROM `word` WHERE 1';
-        $record=mysqli_query($db,$sql) or die(mysqli_error($db));
+        //$sql='SELECT `word_id`,`word` FROM `word` WHERE `delete_flag`=1';
+        //$record=mysqli_query($db,$sql) or die(mysqli_error($db));
         $check=array();
         $check_words=array();
         $result=array();
