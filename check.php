@@ -37,7 +37,7 @@ if (!empty($_POST)) {
 			  	 	    mysqli_query($db,$sql) or die(mysqli_error($db));
 
 			  	 	    //textテーブルからtext_idを取り出す
-						$sql = sprintf('SELECT `text_id` FROM `text` WHERE `text`="%s"',mysqli_real_escape_string($db,$_SESSION['text']));
+						$sql = sprintf('SELECT `text_id` FROM `text` WHERE `text`="%s" AND `m_id`=%d',mysqli_real_escape_string($db,$_SESSION['text']),mysqli_real_escape_string($db,$_SESSION['id']));
 			    		$record=mysqli_query($db,$sql) or die(mysqli_error($db));
 			    		$t_id=mysqli_fetch_assoc($record);
 			    			special_var_dump($t_id['text_id']);
