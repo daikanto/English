@@ -45,7 +45,7 @@ if (!empty($_POST)) {
 
 
 
-			//DBhへの単語単語登録
+			//DBへの単語単語登録
               foreach ($_SESSION['english_word'] as $words) {
               	foreach (array($words) as $word) {
               		$count++;
@@ -55,7 +55,7 @@ if (!empty($_POST)) {
 			              special_echo($words);
 			              //special_var_dump($_POST['record'][$count]);
 			             //DBの登録を行う//追加の選択が行われているときのみ
-			            $sql = sprintf('INSERT INTO `word` SET `word`="%s",`status`=0,`t_id`=%d,`detele_flag`="%d",`date`=NOW()',mysqli_real_escape_string($db,$word),mysqli_real_escape_string($db,$t_id['text_id']),mysqli_real_escape_string($db,$_POST['record'][$count]));
+			            $sql = sprintf('INSERT INTO `word` SET `word`="%s",`status`=0,`m_id`=%d,`t_id`=%d,`delete_flag`="%d",`date`=NOW()',mysqli_real_escape_string($db,$word),mysqli_real_escape_string($db,$_SESSION['id']),mysqli_real_escape_string($db,$t_id['text_id']),mysqli_real_escape_string($db,$_POST['record'][$count]));
 			            mysqli_query($db,$sql) or die (mysqli_error($db));
 
 						//wordをword_idを取り出す
@@ -77,7 +77,7 @@ if (!empty($_POST)) {
 }
  ?>
  <div>テキストから抽出した英単語</div>
- <form method="POST" action="check.php">
+<form method="POST" action="check.php">
 <table border="1" width="450" cellspacing="0" cellpadding="5" bordercolor="#333333">
 <tr>
 <th bgcolor="#EE0000"><font color="#FFFFFF">英単語</font></th>
@@ -88,8 +88,8 @@ if (!empty($_POST)) {
 <tr>
 <td bgcolor="#99CC00" align="center"  nowrap><?php echo $word; ?></td>
 <td bgcolor="#FFFFFF" valign="top" width="200">
-<input type="radio" name="record[<?php echo $i; ?>]" value="1" checked="checked"/>追加する
-<input type="radio" name="record[<?php echo $i; ?>]" value="0" />追加しない</font></td>
+<input type="radio" name="record[<?php echo $i; ?>]" value="0" checked="checked"/>追加する
+<input type="radio" name="record[<?php echo $i; ?>]" value="1" />追加しない</font></td>
 </tr>
 <!<?php endforeach ?>
 

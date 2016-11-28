@@ -199,4 +199,6 @@ require("functions.php");
  	<textarea name="text" style="font-size: 50px"></textarea><br>
  	<input type="submit" value="単語を検索">
  </form>
- <a href="edit.php?m_id=<?php echo $_SESSION['id']; ?>">編集</a>|<a href="show.php">単語一覧へ</a>
+ <a href="edit.php?m_id=<?php echo $_SESSION['id']; ?>">編集</a>|
+ <a href="show.php?m_id=<?php echo $_SESSION['id']; ?>">単語一覧へ</a>|
+ <a href="text.php?m_id=<?php echo $_SESSION['id']; ?>">テキスト一覧へ</a>

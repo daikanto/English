@@ -45,8 +45,8 @@
 		 	  special_var_dump($text);      	
 		      }
 		//英単語
-		 	  $sql=sprintf('SELECT `word` FROM `word` WHERE `word_id`=%d', mysqli_real_escape_string($db,$id['w_id']));
-		 	  $record=mysqli_query($db, $sql) or die(mysqli_error($db));
+		 	  $sql=sprintf('SELECT `word` FROM `word`WHERE `word_id`=%d AND `delete_flag`=0', mysqli_real_escape_string($db,$id['w_id']));
+			  $record=mysqli_query($db, $sql) or die(mysqli_error($db));
 
 		 	  $word=mysqli_fetch_assoc($record);
 		 	  	array_push($words, $word['word']);
@@ -56,12 +56,13 @@
 		      else{
 		 	  special_var_dump($word);      	
 		      }
-		}
+		
+	}
 
 
   
  ?>
- 
+
 <div>テキストから抽出した英単語</div>
 <input type="hidden" name="action" value="submit">
 <table border="1" width="500" cellspacing="0" cellpadding="5" bordercolor="#333333">
@@ -72,7 +73,7 @@
 <?php foreach ($words as $word): ?>
 <tr>
 <td bgcolor="#99CC00" align="center" nowrap><?php if ($word==''): ?>
-<?php echo '該当する英単語がありません'; ?>
+<?php special_echo('該当する英単語がありません'); ?>
 <?php else: ?>
 <?php echo $word; ?>	
 <?php endif ?>
