@@ -69,13 +69,16 @@
 					 	
 
 						//$test=mysqli_fetch_assoc($_POST['record']);	 	
-			         	$sql =sprintf('UPDATE `word` SET `delete_flag`=%d WHERE `word_id`=%d',mysqli_real_escape_string($db,$_POST['record'][$count]),mysqli_real_escape_string($db,$id['w_id']));
+			         	$sql =sprintf('UPDATE `word` SET `delete_flag`=%d WHERE `word_id`=%d',mysqli_real_escape_string($db,$_POST['record'][$num]),mysqli_real_escape_string($db,$id['w_id']));
 					 	  mysqli_query($db, $sql) or die(mysqli_error($db));
 					 	  special_echo('OK');
 						  special_var_dump($_POST['record']);
 						  special_var_dump($id['w_id']);
+						  if($num==$count){
 						  header('Location:index.php');
 						  exit();
+						  }
+
 						  }
 					 	  	 	  
 			}					

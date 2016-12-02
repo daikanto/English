@@ -68,12 +68,14 @@ if (!empty($_POST)) {
 			    		$sql = sprintf('INSERT INTO `WID_TID` SET `w_id`=%d,`t_id`=%d,`m_id`=%d',mysqli_real_escape_string($db,$w_id['word_id']),mysqli_real_escape_string($db,$t_id['text_id']),mysqli_real_escape_string($db,$_SESSION['id']));
 			   			mysqli_query($db,$sql) or die (mysqli_error($db));
 
-			   			//unset($_SESSION['english']);
-			            //header('Location:index.php');
-			            //exit();
 
    			}
 			    }
+
+			    
+			   			unset($_SESSION['english']);
+			            header('Location:index.php');
+			            exit();
 }
  ?>
  <div>テキストから抽出した英単語</div>
